@@ -1,5 +1,16 @@
 # CUI-NG Changelog
 
+## [1.10.7] - Unreleased
+
+### Added
+- Cui-Dropdown
+ - Dropdown now opens using enter/space and up/down arrow keys when tab targetted.
+ - The up/down arrow keys now cycle up/down the dropdown items.
+ - Enter/Space now selects the current highlighted item and closes the dropdown.
+ - Tabbing out of the dropdown now closes the dropdown.
+ - Pressing buttons (A-Z) will now highlight/cycle through all the dropdown items  that start with that corresponding letter.
+ 
+
 ## [1.10.6] - 2017-1-4
 
 ### Changed
