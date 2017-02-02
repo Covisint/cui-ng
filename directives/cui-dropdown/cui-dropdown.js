@@ -14,7 +14,6 @@ angular.module('cui-ng')
             let newScope
             let dropdownScope
             let currentIndex
-            
             let itemSearchLetter = ''
             let itemSearchIndexes = []
             let itemSearchCurrentIndex
@@ -126,18 +125,19 @@ angular.module('cui-ng')
                     },
                     selectItemByKey(event) {
                         const dropdownItems = cuiDropdown.selectors.$dropdown[0].children
+                        const pressedKey = event.key.toLowerCase()
 
                         // If we are searching for the first time, or are pressing a new key,
                         // we generate an array containing the indexes of all dropdown items
                         // that start with that letter
-                        if (!itemSearchLetter.length || event.key !== itemSearchLetter) {
-                            itemSearchLetter = event.key
+                        if (!itemSearchLetter.length || pressedKey !== itemSearchLetter) {
+                            itemSearchLetter = pressedKey
                             itemSearchCurrentIndex = 0
                             itemSearchIndexes = []
 
                             angular.forEach(dropdownItems, (item, index) => {
                                 if (item.outerText) {
-                                    if (event.key === item.outerText[0].toLowerCase()) {
+                                    if (pressedKey === item.outerText[0].toLowerCase()) {
                                         itemSearchIndexes.push(index)
                                     }
                                 }
@@ -147,8 +147,8 @@ angular.module('cui-ng')
                         // Focus the appropriate dropdown item
                         dropdownItems[itemSearchIndexes[itemSearchCurrentIndex]] && dropdownItems[itemSearchIndexes[itemSearchCurrentIndex]].focus()
 
-                        // Increment the indexes array index to get the next item on the next keypress,
-                        // or start back from the begining
+                        // Increment the current search index we are on to get the next item on the next keypress,
+                        // or start back from the begining if we just saw the last item.
                         if (itemSearchIndexes.length > 1) {
                             if (itemSearchCurrentIndex+1 === itemSearchIndexes.length) {
                                 itemSearchCurrentIndex = 0
