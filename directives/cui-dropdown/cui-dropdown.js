@@ -14,6 +14,10 @@ angular.module('cui-ng')
             let newScope
             let dropdownScope
             let currentIndex
+            
+            let itemSearchLetter = ''
+            let itemSearchIndexes = []
+            let itemSearchCurrentIndex
 
             const cuiDropdown = {
                 initScope: () => {
@@ -84,6 +88,7 @@ angular.module('cui-ng')
                             dropdownScope.$destroy()
                             cuiDropdown.selectors.$dropdown.detach()
                             cuiDropdown.selectors.$dropdown = null
+                            itemSearchLetter = ''
                         }
                     },
                     handleKeyup: (e, keyCode) => {
@@ -110,10 +115,48 @@ angular.module('cui-ng')
                             // Select current dropdown item when pressing space or enter
                             cuiDropdown.helpers.reassignModel(event, event.target.tabIndex)
                         }
+                        else {
+                            // We are selecting items based on alphabetical key
+                            cuiDropdown.scope.selectItemByKey(event)
+                        }
                     },
                     handleItemKeydown: (event) => {
-                        // Hide the dropdown if we tab out of it and lose focus
+                        // Hide the dropdown if we tab out of it and loses focus
                         if (event.keyCode === 9) cuiDropdown.scope.destroyDropdown()
+                    },
+                    selectItemByKey(event) {
+                        const dropdownItems = cuiDropdown.selectors.$dropdown[0].children
+
+                        // If we are searching for the first time, or are pressing a new key,
+                        // we generate an array containing the indexes of all dropdown items
+                        // that start with that letter
+                        if (!itemSearchLetter.length || event.key !== itemSearchLetter) {
+                            itemSearchLetter = event.key
+                            itemSearchCurrentIndex = 0
+                            itemSearchIndexes = []
+
+                            angular.forEach(dropdownItems, (item, index) => {
+                                if (item.outerText) {
+                                    if (event.key === item.outerText[0].toLowerCase()) {
+                                        itemSearchIndexes.push(index)
+                                    }
+                                }
+                            })
+                        }
+
+                        // Focus the appropriate dropdown item
+                        dropdownItems[itemSearchIndexes[itemSearchCurrentIndex]] && dropdownItems[itemSearchIndexes[itemSearchCurrentIndex]].focus()
+
+                        // Increment the indexes array index to get the next item on the next keypress,
+                        // or start back from the begining
+                        if (itemSearchIndexes.length > 1) {
+                            if (itemSearchCurrentIndex+1 === itemSearchIndexes.length) {
+                                itemSearchCurrentIndex = 0
+                            }
+                            else {
+                                itemSearchCurrentIndex += 1
+                            }
+                        }
                     }
                 },
                 helpers: {
