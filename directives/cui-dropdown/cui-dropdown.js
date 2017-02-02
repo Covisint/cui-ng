@@ -85,6 +85,35 @@ angular.module('cui-ng')
                             cuiDropdown.selectors.$dropdown.detach()
                             cuiDropdown.selectors.$dropdown = null
                         }
+                    },
+                    handleKeyup: (e, keyCode) => {
+                        if ((keyCode === 38 || keyCode === 40 || keyCode === 32 || keyCode === 13) && !cuiDropdown.selectors.$dropdown) {
+                          cuiDropdown.scope.toggleDropdown()
+                          cuiDropdown.selectors.$dropdown[0].children[0].focus()
+                        }
+                    },
+                    handleItemKeyup: (event) => {
+                        const dropdownItems = cuiDropdown.selectors.$dropdown[0].children
+                        const dropdownItemCount = dropdownItems.length
+
+                        if (event.keyCode === 40) {
+                            // Handle down arrow key press
+                            let nextElementIndex = event.target.tabIndex + 1
+                            if (nextElementIndex !== dropdownItemCount) dropdownItems[nextElementIndex].focus()
+                        }
+                        else if (event.keyCode === 38) {
+                            // Handle up arrow key press
+                            let nextElementIndex = event.target.tabIndex - 1
+                            if (nextElementIndex !== -1) dropdownItems[nextElementIndex].focus()
+                        }
+                        else if (event.keyCode === 13 || event.keyCode === 32) {
+                            // Select current dropdown item when pressing space or enter
+                            cuiDropdown.helpers.reassignModel(event, event.target.tabIndex)
+                        }
+                    },
+                    handleItemKeydown: (event) => {
+                        // Hide the dropdown if we tab out of it and lose focus
+                        if (event.keyCode === 9) cuiDropdown.scope.destroyDropdown()
                     }
                 },
                 helpers: {
@@ -126,9 +155,16 @@ angular.module('cui-ng')
                     getDropdownItem: (index,displayValue) => {
                         const ngClick = `$root.$broadcast('${id}', ${index})`;
                         return $compile(
-                            `<div class="${cuiDropdown.config.dropdownItemClass}" ng-click="${ngClick}">
-                                ${displayValue}
-                            </div>`
+                            `
+                                <div class="${cuiDropdown.config.dropdownItemClass}" 
+                                    ng-click="${ngClick}" 
+                                    tabindex="${index}"
+                                    ng-keyup="handleItemKeyup($event)"
+                                    ng-keydown="handleItemKeydown($event)"
+                                >
+                                    ${displayValue}
+                                </div>
+                            `
                         )(scope)
                     },
                     setInitialInputValue: () => {
@@ -171,9 +207,17 @@ angular.module('cui-ng')
                         if(newScope) newScope.$destroy() // this makes sure that if the input has been rendered once the off click handler is removed
                         newScope = scope.$new()
                         const element = $compile(
-                            `<div class="${cuiDropdown.config.inputClass}" ng-click="toggleDropdown()" off-click="destroyDropdown()" id="cui-dropdown-${id}">
-                                {{displayValue}}
-                            </div>`
+                            `
+                                <div class="${cuiDropdown.config.inputClass}" 
+                                    tabindex="0" 
+                                    ng-keyup="handleKeyup($event, $event.keyCode)" 
+                                    ng-click="toggleDropdown()" 
+                                    off-click="destroyDropdown()"
+                                    id="cui-dropdown-${id}"
+                                >
+                                    {{displayValue}}
+                                </div>
+                            `
                         )(newScope)
                         cuiDropdown.selectors.$cuiDropdown.replaceWith(element)
                         cuiDropdown.selectors.$cuiDropdown = element
@@ -182,7 +226,13 @@ angular.module('cui-ng')
                         if(dropdownScope) dropdownScope.$destroy()
                         dropdownScope = scope.$new()
                         const dropdown = $compile(
-                            `<div class="${cuiDropdown.config.dropdownWrapperClass}" off-click-filter="'#cui-dropdown-${id}'"></div>`
+                        `
+                            <div class="${cuiDropdown.config.dropdownWrapperClass}" 
+                                tabindex="0"
+                                off-click-filter="'#cui-dropdown-${id}'"
+                            >
+                            </div>
+                        `
                         )(dropdownScope)
                         const displayValues = cuiDropdown.helpers.getOptionDisplayValues()
                         displayValues.forEach((value, i) => {
