@@ -121,6 +121,9 @@ angular.module('cui-ng')
                     },
                     handleItemKeydown: (event) => {
                         // Hide the dropdown if we tab out of it and loses focus
+                        if ([38, 40].indexOf(event.keyCode) > -1) {
+                            event.preventDefault()
+                        }
                         if (event.keyCode === 9) cuiDropdown.scope.destroyDropdown()
                     },
                     selectItemByKey(event) {
