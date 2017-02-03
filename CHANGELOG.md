@@ -3,7 +3,7 @@
 ## [1.10.7] - Unreleased
 
 ### Added
-- Cui-Dropdown now supports standard dropdown keyboard functionality such as opening the dropdown using Space/Enter or navigating through dropdown options via arrow keys and selecting them with Space/Enter. You can read the specific changes in the [Cui-Dropdown Readme]('./directives/cui-dropdown/README.md').
+- Cui-Dropdown now supports standard dropdown keyboard functionality such as opening the dropdown using Space/Enter or navigating through dropdown options via arrow keys and selecting them with Space/Enter. You can read the specific changes in the [Cui-Dropdown Readme](./directives/cui-dropdown/README.md).
 
 
 ## [1.10.6] - 2017-1-4
