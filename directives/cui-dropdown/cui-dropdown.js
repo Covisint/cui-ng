@@ -79,7 +79,12 @@ angular.module('cui-ng')
                 },
                 scope: {
                     toggleDropdown: () => {
-                        if (!cuiDropdown.selectors.$dropdown) cuiDropdown.render.dropdown()
+                        if (!cuiDropdown.selectors.$dropdown) {
+                            cuiDropdown.render.dropdown()
+                            // Focus the first element when the dropdown opens
+                            // to enable moving through the options via arrow keys
+                            cuiDropdown.selectors.$dropdown[0].children[0].focus()
+                        }
                         else cuiDropdown.scope.destroyDropdown()
                     },
                     destroyDropdown: () => {
@@ -90,45 +95,51 @@ angular.module('cui-ng')
                             itemSearchLetter = ''
                         }
                     },
-                    handleKeyup: (e, keyCode) => {
-                        if ((keyCode === 38 || keyCode === 40 || keyCode === 32 || keyCode === 13) && !cuiDropdown.selectors.$dropdown) {
-                          cuiDropdown.scope.toggleDropdown()
-                          cuiDropdown.selectors.$dropdown[0].children[0].focus()
+                    handleKeyup: (e) => {
+                        if (([13, 32, 38, 40].indexOf(e.keyCode) > -1) && !cuiDropdown.selectors.$dropdown) {
+                            cuiDropdown.scope.toggleDropdown()
+                            cuiDropdown.selectors.$dropdown[0].children[0].focus()  
                         }
                     },
-                    handleItemKeyup: (event) => {
+                    handleItemKeyup: (e) => {
                         const dropdownItems = cuiDropdown.selectors.$dropdown[0].children
                         const dropdownItemCount = dropdownItems.length
 
-                        if (event.keyCode === 40) {
+                        if (e.keyCode === 40) {
                             // Handle down arrow key press
-                            let nextElementIndex = event.target.tabIndex + 1
+                            let nextElementIndex = e.target.tabIndex + 1
                             if (nextElementIndex !== dropdownItemCount) dropdownItems[nextElementIndex].focus()
                         }
-                        else if (event.keyCode === 38) {
+                        else if (e.keyCode === 38) {
                             // Handle up arrow key press
-                            let nextElementIndex = event.target.tabIndex - 1
+                            let nextElementIndex = e.target.tabIndex - 1
                             if (nextElementIndex !== -1) dropdownItems[nextElementIndex].focus()
                         }
-                        else if (event.keyCode === 13 || event.keyCode === 32) {
+                        else if (e.keyCode === 13 || e.keyCode === 32) {
                             // Select current dropdown item when pressing space or enter
-                            cuiDropdown.helpers.reassignModel(event, event.target.tabIndex)
+                            cuiDropdown.helpers.reassignModel(e, e.target.tabIndex)
                         }
                         else {
                             // We are selecting items based on alphabetical key
-                            cuiDropdown.scope.selectItemByKey(event)
+                            cuiDropdown.scope.selectItemByKey(e)
                         }
                     },
-                    handleItemKeydown: (event) => {
+                    handleItemKeydown: (e) => {
                         // Hide the dropdown if we tab out of it and loses focus
-                        if ([38, 40].indexOf(event.keyCode) > -1) {
-                            event.preventDefault()
+                        if ([38, 40].indexOf(e.keyCode) > -1) {
+                            e.preventDefault()
                         }
-                        if (event.keyCode === 9) cuiDropdown.scope.destroyDropdown()
+                        if (e.keyCode === 9) cuiDropdown.scope.destroyDropdown()
                     },
-                    selectItemByKey(event) {
+                    handleItemMouseover: (e) => {
+                        // Focus the dropdown item we mouse over. This allows us to
+                        // move up/down using the arrow keys from the current element
+                        // we mouse over.
+                        e.target.focus()
+                    },
+                    selectItemByKey(e) {
                         const dropdownItems = cuiDropdown.selectors.$dropdown[0].children
-                        const pressedKey = event.key.toLowerCase()
+                        const pressedKey = e.key.toLowerCase()
 
                         // If we are searching for the first time, or are pressing a new key,
                         // we generate an array containing the indexes of all dropdown items
@@ -207,6 +218,7 @@ angular.module('cui-ng')
                                     tabindex="${index}"
                                     ng-keyup="handleItemKeyup($event)"
                                     ng-keydown="handleItemKeydown($event)"
+                                    ng-mousemove="handleItemMouseover($event)"
                                 >
                                     ${displayValue}
                                 </div>
@@ -256,7 +268,7 @@ angular.module('cui-ng')
                             `
                                 <div class="${cuiDropdown.config.inputClass}" 
                                     tabindex="0" 
-                                    ng-keyup="handleKeyup($event, $event.keyCode)" 
+                                    ng-keyup="handleKeyup($event)" 
                                     ng-click="toggleDropdown()" 
                                     off-click="destroyDropdown()"
                                     id="cui-dropdown-${id}"
