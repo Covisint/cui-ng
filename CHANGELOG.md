@@ -3,13 +3,8 @@
 ## [1.10.7] - Unreleased
 
 ### Added
-- Cui-Dropdown
- - Dropdown now opens using enter/space and up/down arrow keys when tab targetted.
- - The up/down arrow keys now cycle up/down the dropdown items.
- - Enter/Space now selects the current highlighted item and closes the dropdown.
- - Tabbing out of the dropdown now closes the dropdown.
- - Pressing buttons (A-Z) will now highlight/cycle through all the dropdown items  that start with that corresponding letter.
- 
+- Cui-Dropdown now supports standard dropdown keyboard functionality such as opening the dropdown using Space/Enter or navigating through dropdown options via arrow keys and selecting them with Space/Enter. You can read the specific changes in the [Cui-Dropdown Readme]('./directives/cui-dropdown/README.md').
+
 
 ## [1.10.6] - 2017-1-4
 
