@@ -19,8 +19,15 @@ Cui-dropdown generates a dropdown with the help of tether.
  * `offset`: (default '0 0') Tether offset
  * `returnValue`: (default 'option') This is what gets assigned to ng-model. If left default it passes the whole object that got selected.
  * `displayValue`: (defaul 'option') This is what gets shown in the dropdown and in the box that holds the current value. Can be any property from the selected object (`display-value="option.name"`) or even use a filter (`display-value="(option.name | cuiI18n)"`). NOTE: If you are using a filter follow the parenthesis syntax.
+ * `single-search`: This attribute changes how keyboard commands are used to select dropdown items. By default, Cui-Dropdown uses type ahead to highlight selections (when the dropdown is expanded, if you start typing out one of the dropdown items out, it will select that item. Pressing delete will reset the type ahead). Adding the `single-search` attribute will change it to highlight/cycle through items based on the first letter in the option (pressing `B` repeatedly will cycle through all items that start with the letter `B`).
 
 ## Changelog
+
+### 2/6/2017
+
+- Added type-ahead keyboard functionality to Cui-Dropdown.
+- Changed keyboard functionality to use type-ahead by default.
+- Added support for optional attribute `single-search`. This will make Cui-Dropown highlight/cycle through options based on the first letter for each option when using the keyboard.
 
 ### 2/3/2017
 
