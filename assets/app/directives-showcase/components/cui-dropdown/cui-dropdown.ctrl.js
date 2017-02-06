@@ -3,6 +3,6 @@ angular.module('app')
 
 	const cuiDropdown = this
 
-	cuiDropdown.options = 'Dog, Kitten, Piggy'
+	cuiDropdown.options = 'Apple, Bike, Bulldog, Peter, Pan, Pumpkin, Biscuit, Beer, Pizza, Pie'
 
 })

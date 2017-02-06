@@ -2,14 +2,26 @@
   <div class="cui-tile__title">Cui-Dropdown</div>
   <div class="cui-tile__body">
 
-		<input class="cui-input" ng-model="cuiDropdown.options" ng-init="directives.options='option1,option2,option3'"/>
+		<p>You can edit the dropdown options here:</p>
+		<input style="margin-bottom:40px" class="cui-input" ng-model="cuiDropdown.options" />
 
-		<!-- CUI-Dropdown -->
-		<cui-dropdown name="test" ng-model="cuiDropdown.dropdownTest" options="cuiDropdown.options.split(',')" default-option="'Select one'" ng-required="true"></cui-dropdown>
+		<!-- Cui-Dropdown Example 1 -->
+		<div style="margin-bottom:40px">
+			<p>This dropdown uses the default type-ahead keyboard functionality. You can select dropdown items by typing one of the options on your keyboard. You can press the <strong>Delete</strong> button to clear the type-ahead search.</p>
+			<cui-dropdown name="test" ng-model="cuiDropdown.dropdownTest" options="cuiDropdown.options.split(',')" default-option="'Select one'" ng-required="true"></cui-dropdown>
+		</div>
 
-		<span ng-if="cuiDropdown.dropdownTest">Currently selected: {{cuiDropdown.dropdownTest}}</span>
+		<!-- Cui-Dropdown Example 2 -->
+		<div style="margin-bottom:40px">
+			<p>This dropdown allows you to search/toggle through the options based on the first letter of each option. To use this simply add the <strong>single-search</strong> attribute to the Cui-Dropdown element.</p>
+			<cui-dropdown name="test2" ng-model="cuiDropdown.dropdownTest2" options="cuiDropdown.options.split(',')" default-option="'Select one'" ng-required="true" single-search></cui-dropdown>
+		</div>
 
-		<br/><br/>
+		<div style="margin-bottom:40px">
+			<p ng-if="cuiDropdown.dropdownTest">Currently selected for first dropdown: {{cuiDropdown.dropdownTest}}</p>
+			<p ng-if="cuiDropdown.dropdownTest2">Currently selected for second dropdown: {{cuiDropdown.dropdownTest2}}</p>
+			<p>The dropdowns also support all other default keyboard functionality. If you select the dropdowns with tab-targeting, you can open them using the <strong>Up/Down/Space/Enter</strong> keys. You can cycle through the options using the <strong>Up/Down</strong> arrow keys. You can select options using the <strong>Space/Enter</strong> keys. You can also close a dropdown by tabbing out of it.</p>
+		</div>
 
 		<!-- Documentation Links -->
     <a class="cui-link" href="https://github.com/covisint/cui-ng/tree/master/assets/app/directives-showcase/components/cui-dropdown" target="blank">Click here to see the code used on this page.</a><br/><br/>
