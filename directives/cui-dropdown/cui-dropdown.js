@@ -17,6 +17,7 @@ angular.module('cui-ng')
             let itemSearchLetter = ''
             let itemSearchIndexes = []
             let itemSearchCurrentIndex
+            let typeAheadSearch = ''
 
             const cuiDropdown = {
                 initScope: () => {
@@ -93,6 +94,7 @@ angular.module('cui-ng')
                             cuiDropdown.selectors.$dropdown.detach()
                             cuiDropdown.selectors.$dropdown = null
                             itemSearchLetter = ''
+                            typeAheadSearch = ''
                         }
                     },
                     handleKeyup: (e) => {
@@ -120,8 +122,10 @@ angular.module('cui-ng')
                             cuiDropdown.helpers.reassignModel(e, e.target.tabIndex)
                         }
                         else {
-                            // We are selecting items based on alphabetical key
-                            cuiDropdown.scope.selectItemByKey(e)
+                            // If a 'single-search' optional attribute is provided, we select/cycle based on
+                            // the first letter only. Otherwise by default we run type-ahead selection.
+                            if (attrs.hasOwnProperty('singleSearch')) cuiDropdown.scope.selectItemSingleSearch(e)
+                            else cuiDropdown.scope.selectItemTypeAhead(e)
                         }
                     },
                     handleItemKeydown: (e) => {
@@ -137,7 +141,7 @@ angular.module('cui-ng')
                         // we mouse over.
                         e.target.focus()
                     },
-                    selectItemByKey(e) {
+                    selectItemSingleSearch(e) {
                         const dropdownItems = cuiDropdown.selectors.$dropdown[0].children
                         const pressedKey = e.key.toLowerCase()
 
@@ -170,6 +174,27 @@ angular.module('cui-ng')
                             else {
                                 itemSearchCurrentIndex += 1
                             }
+                        }
+                    },
+                    selectItemTypeAhead(e) {
+                        const dropdownItems = cuiDropdown.selectors.$dropdown[0].children
+
+                        if (e.keyCode === 8) {
+                            typeAheadSearch = ''
+                            dropdownItems[0].focus()
+                        }
+                        else {
+                            let shouldContinue = true
+                            typeAheadSearch += e.key.toLowerCase()
+
+                            angular.forEach(dropdownItems, (item, index) => {
+                                if (shouldContinue) {
+                                    if (item.outerText.toLowerCase().indexOf(typeAheadSearch) >= 0) {
+                                        dropdownItems[index].focus()
+                                        shouldContinue = false
+                                    }
+                                }
+                            })
                         }
                     }
                 },
