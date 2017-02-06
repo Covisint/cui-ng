@@ -189,7 +189,13 @@ angular.module('cui-ng')
 
                             angular.forEach(dropdownItems, (item, index) => {
                                 if (shouldContinue) {
-                                    if (item.outerText.toLowerCase().indexOf(typeAheadSearch) >= 0) {
+                                    if (typeAheadSearch.length === 1) {
+                                        if (item.outerText[0].toLowerCase() === typeAheadSearch) {
+                                            dropdownItems[index].focus()
+                                            shouldContinue = false
+                                        }
+                                    }
+                                    else if (item.outerText.toLowerCase().indexOf(typeAheadSearch) >= 0) {
                                         dropdownItems[index].focus()
                                         shouldContinue = false
                                     }
