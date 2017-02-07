@@ -1,7 +1,7 @@
 {
   "name": "@covisint/cui-ng",
   "description": "Library of Angular directives for use with CUI projects",
-  "version": "1.10.6",
+  "version": "1.10.7",
   "license": "SEE LICENSE IN LICENSE",
   "author": {
     "name": "Thirdwave, LLC",
