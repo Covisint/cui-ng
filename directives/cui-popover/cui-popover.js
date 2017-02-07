@@ -92,7 +92,7 @@ angular.module('cui-ng')
                                         if(popoverTether[positionInUse].element.classList.contains('tether-out-of-bounds')) self.newMode('try-another')
                                         else self.newMode('normal')
                                     }
-                                }, 100)
+                                }, 100, 0, false)
                             },
                             elementHtml:() => {
                                 elementHtmlInterval=$interval(()=>{
@@ -101,12 +101,12 @@ angular.module('cui-ng')
                                         elementHtml = elemHtml
                                         cuiPopover.render.newHtml()
                                     }
-                                }, 100)
+                                }, 100, 0, false)
                             },
                             targetElementPosition:() => {
                                 targetElementPositionInterval=$interval(() => {
                                     scope.targetPosition = self.selectors.$target.offset()
-                                }, 50)
+                                }, 50, 0, false)
 
                                 scope.$watch('targetPosition',(newPosition) => {
                                     newPosition && popoverTether[positionInUse].position()

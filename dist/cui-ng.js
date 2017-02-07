@@ -1,6 +1,6 @@
 'use strict';var _slicedToArray = function () {function sliceIterator(arr, i) {var _arr = [];var _n = true;var _d = false;var _e = undefined;try {for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {_arr.push(_s.value);if (i && _arr.length === i) break;}} catch (err) {_d = true;_e = err;} finally {try {if (!_n && _i["return"]) _i["return"]();} finally {if (_d) throw _e;}}return _arr;}return function (arr, i) {if (Array.isArray(arr)) {return arr;} else if (Symbol.iterator in Object(arr)) {return sliceIterator(arr, i);} else {throw new TypeError("Invalid attempt to destructure non-iterable instance");}};}();var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {return typeof obj;} : function (obj) {return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;};function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 
-// cui-ng build Wed Jan 04 2017 12:28:50
+// cui-ng build Tue Feb 07 2017 09:56:16
 
 ;(function (angular) {
     'use strict';
@@ -1236,6 +1236,10 @@
                 var newScope = void 0;
                 var dropdownScope = void 0;
                 var currentIndex = void 0;
+                var itemSearchLetter = '';
+                var itemSearchIndexes = [];
+                var itemSearchCurrentIndex = void 0;
+                var typeAheadSearch = '';
 
                 var cuiDropdown = {
                     initScope: function initScope() {
@@ -1298,7 +1302,12 @@
 
                     scope: {
                         toggleDropdown: function toggleDropdown() {
-                            if (!cuiDropdown.selectors.$dropdown) cuiDropdown.render.dropdown();else
+                            if (!cuiDropdown.selectors.$dropdown) {
+                                cuiDropdown.render.dropdown();
+                                // Focus the first element when the dropdown opens
+                                // to enable moving through the options via arrow keys
+                                cuiDropdown.selectors.$dropdown[0].children[0].focus();
+                            } else
                             cuiDropdown.scope.destroyDropdown();
                         },
                         destroyDropdown: function destroyDropdown() {
@@ -1306,6 +1315,114 @@
                                 dropdownScope.$destroy();
                                 cuiDropdown.selectors.$dropdown.detach();
                                 cuiDropdown.selectors.$dropdown = null;
+                                itemSearchLetter = '';
+                                typeAheadSearch = '';
+                            }
+                        },
+                        handleKeyup: function handleKeyup(e) {
+                            if ([13, 32, 38, 40].indexOf(e.keyCode) > -1 && !cuiDropdown.selectors.$dropdown) {
+                                cuiDropdown.scope.toggleDropdown();
+                                cuiDropdown.selectors.$dropdown[0].children[0].focus();
+                            }
+                        },
+                        handleItemKeyup: function handleItemKeyup(e) {
+                            var dropdownItems = cuiDropdown.selectors.$dropdown[0].children;
+                            var dropdownItemCount = dropdownItems.length;
+
+                            if (e.keyCode === 40) {
+                                // Handle down arrow key press
+                                var nextElementIndex = e.target.tabIndex + 1;
+                                if (nextElementIndex !== dropdownItemCount) dropdownItems[nextElementIndex].focus();
+                            } else
+                            if (e.keyCode === 38) {
+                                // Handle up arrow key press
+                                var _nextElementIndex = e.target.tabIndex - 1;
+                                if (_nextElementIndex !== -1) dropdownItems[_nextElementIndex].focus();
+                            } else
+                            if (e.keyCode === 13 || e.keyCode === 32) {
+                                // Select current dropdown item when pressing space or enter
+                                cuiDropdown.helpers.reassignModel(e, e.target.tabIndex);
+                            } else
+                            {
+                                // If a 'single-search' optional attribute is provided, we select/cycle based on
+                                // the first letter only. Otherwise by default we run type-ahead selection.
+                                if (attrs.hasOwnProperty('singleSearch')) cuiDropdown.scope.selectItemSingleSearch(e);else
+                                cuiDropdown.scope.selectItemTypeAhead(e);
+                            }
+                        },
+                        handleItemKeydown: function handleItemKeydown(e) {
+                            // Hide the dropdown if we tab out of it and loses focus
+                            if ([38, 40].indexOf(e.keyCode) > -1) {
+                                e.preventDefault();
+                            }
+                            if (e.keyCode === 9) cuiDropdown.scope.destroyDropdown();
+                        },
+                        handleItemMouseover: function handleItemMouseover(e) {
+                            // Focus the dropdown item we mouse over. This allows us to
+                            // move up/down using the arrow keys from the current element
+                            // we mouse over.
+                            e.target.focus();
+                        },
+                        selectItemSingleSearch: function selectItemSingleSearch(e) {
+                            var dropdownItems = cuiDropdown.selectors.$dropdown[0].children;
+                            var pressedKey = e.key.toLowerCase();
+
+                            // If we are searching for the first time, or are pressing a new key,
+                            // we generate an array containing the indexes of all dropdown items
+                            // that start with that letter
+                            if (!itemSearchLetter.length || pressedKey !== itemSearchLetter) {
+                                itemSearchLetter = pressedKey;
+                                itemSearchCurrentIndex = 0;
+                                itemSearchIndexes = [];
+
+                                angular.forEach(dropdownItems, function (item, index) {
+                                    if (item.outerText) {
+                                        if (pressedKey === item.outerText[0].toLowerCase()) {
+                                            itemSearchIndexes.push(index);
+                                        }
+                                    }
+                                });
+                            }
+
+                            // Focus the appropriate dropdown item
+                            dropdownItems[itemSearchIndexes[itemSearchCurrentIndex]] && dropdownItems[itemSearchIndexes[itemSearchCurrentIndex]].focus();
+
+                            // Increment the current search index we are on to get the next item on the next keypress,
+                            // or start back from the begining if we just saw the last item.
+                            if (itemSearchIndexes.length > 1) {
+                                if (itemSearchCurrentIndex + 1 === itemSearchIndexes.length) {
+                                    itemSearchCurrentIndex = 0;
+                                } else
+                                {
+                                    itemSearchCurrentIndex += 1;
+                                }
+                            }
+                        },
+                        selectItemTypeAhead: function selectItemTypeAhead(e) {
+                            var dropdownItems = cuiDropdown.selectors.$dropdown[0].children;
+
+                            if (e.keyCode === 8) {
+                                typeAheadSearch = '';
+                                dropdownItems[0].focus();
+                            } else
+                            {(function () {
+                                    var shouldContinue = true;
+                                    typeAheadSearch += e.key.toLowerCase();
+
+                                    angular.forEach(dropdownItems, function (item, index) {
+                                        if (shouldContinue) {
+                                            if (typeAheadSearch.length === 1) {
+                                                if (item.outerText[0].toLowerCase() === typeAheadSearch) {
+                                                    dropdownItems[index].focus();
+                                                    shouldContinue = false;
+                                                }
+                                            } else
+                                            if (item.outerText.toLowerCase().indexOf(typeAheadSearch) >= 0) {
+                                                dropdownItems[index].focus();
+                                                shouldContinue = false;
+                                            }
+                                        }
+                                    });})();
                             }
                         } },
 
@@ -1347,9 +1464,17 @@
                         },
                         getDropdownItem: function getDropdownItem(index, displayValue) {
                             var ngClick = '$root.$broadcast(\'' + id + '\', ' + index + ')';
-                            return $compile('<div class="' +
-                            cuiDropdown.config.dropdownItemClass + '" ng-click="' + ngClick + '">\n                                ' +
-                            displayValue + '\n                            </div>')(
+                            return $compile('\n                                <div class="' +
+
+                            cuiDropdown.config.dropdownItemClass + '" \n                                    ng-click="' +
+                            ngClick + '" \n                                    tabindex="' +
+                            index + '"\n                                    ng-keyup="handleItemKeyup($event)"\n                                    ng-keydown="handleItemKeydown($event)"\n                                    ng-mousemove="handleItemMouseover($event)"\n                                >\n                                    ' +
+
+
+
+
+                            displayValue + '\n                                </div>\n                            ')(
+
 
                             scope);
                         },
@@ -1392,8 +1517,16 @@
                         currentValueBox: function currentValueBox() {
                             if (newScope) newScope.$destroy(); // this makes sure that if the input has been rendered once the off click handler is removed
                             newScope = scope.$new();
-                            var element = $compile('<div class="' +
-                            cuiDropdown.config.inputClass + '" ng-click="toggleDropdown()" off-click="destroyDropdown()" id="cui-dropdown-' + id + '">\n                                {{displayValue}}\n                            </div>')(
+                            var element = $compile('\n                                <div class="' +
+
+                            cuiDropdown.config.inputClass + '" \n                                    tabindex="0" \n                                    ng-keyup="handleKeyup($event)" \n                                    ng-click="toggleDropdown()" \n                                    off-click="destroyDropdown()"\n                                    id="cui-dropdown-' +
+
+
+
+
+                            id + '"\n                                >\n                                    {{displayValue}}\n                                </div>\n                            ')(
+
+
 
 
                             newScope);
@@ -1403,8 +1536,14 @@
                         dropdown: function dropdown() {
                             if (dropdownScope) dropdownScope.$destroy();
                             dropdownScope = scope.$new();
-                            var dropdown = $compile('<div class="' +
-                            cuiDropdown.config.dropdownWrapperClass + '" off-click-filter="\'#cui-dropdown-' + id + '\'"></div>')(
+                            var dropdown = $compile('\n                            <div class="' +
+
+                            cuiDropdown.config.dropdownWrapperClass + '" \n                                tabindex="0"\n                                off-click-filter="\'#cui-dropdown-' +
+
+                            id + '\'"\n                            >\n                            </div>\n                        ')(
+
+
+
                             dropdownScope);
                             var displayValues = cuiDropdown.helpers.getOptionDisplayValues();
                             displayValues.forEach(function (value, i) {
@@ -1904,7 +2043,7 @@
                                             if (popoverTether[positionInUse].element.classList.contains('tether-out-of-bounds')) self.newMode('try-another');else
                                             self.newMode('normal');
                                         }
-                                    }, 100);
+                                    }, 100, 0, false);
                                 },
                                 elementHtml: function elementHtml() {
                                     elementHtmlInterval = $interval(function () {
@@ -1913,12 +2052,12 @@
                                             _elementHtml = elemHtml;
                                             cuiPopover.render.newHtml();
                                         }
-                                    }, 100);
+                                    }, 100, 0, false);
                                 },
                                 targetElementPosition: function targetElementPosition() {
                                     targetElementPositionInterval = $interval(function () {
                                         scope.targetPosition = self.selectors.$target.offset();
-                                    }, 50);
+                                    }, 50, 0, false);
 
                                     scope.$watch('targetPosition', function (newPosition) {
                                         newPosition && popoverTether[positionInUse].position();
@@ -3407,7 +3546,7 @@
     }]);
 
     angular.module('cui-ng').
-    directive('paginate', ['$compile', '$timeout', '$interval', '$pagination', function ($compile, $timeout, $interval, $pagination) {
+    directive('paginate', ['$compile', '$timeout', '$window', '$pagination', function ($compile, $timeout, $window, $pagination) {
         return {
             restrict: 'AE',
             scope: {
@@ -3469,11 +3608,11 @@
                             });
                         },
                         paginateResize: function paginateResize() {
-                            resizeInterval = $interval(paginate.helpers.resizeHandler, 50);
+                            angular.element($window).bind('resize', paginate.helpers.newresizeHandler);
                         },
                         scopeDestroy: function scopeDestroy() {
                             scope.$on('$destroy', function () {
-                                $interval.cancel(resizeInterval); // unbinds the resize interval
+                                angular.element($window).off('resize');
                             });
                         } },
 
@@ -3505,12 +3644,9 @@
                             });
                         },
                         resizeHandler: function resizeHandler() {
-                            if (!paginate.config.width) paginate.config.width = paginate.selectors.$paginate.width();else
-                            if (paginate.selectors.$paginate.width() !== paginate.config.width) {
-                                paginate.config.width = paginate.selectors.$paginate.width();
-                                paginate.helpers.updateConfig();
-                                paginate.scope.reRender();
-                            }
+                            paginate.helpers.updateConfig();
+                            paginate.scope.reRender();
+                            scope.$apply();
                         },
                         whatEllipsesToShow: function whatEllipsesToShow() {
                             if (paginate.config.numberOfPages <= paginate.config.howManyPagesWeCanShow) return 'none';else

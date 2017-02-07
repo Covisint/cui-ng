@@ -1,5 +1,5 @@
 angular.module('cui-ng')
-.directive('paginate',['$compile','$timeout','$interval','$pagination',($compile,$timeout,$interval,$pagination) => {
+.directive('paginate',['$compile','$timeout','$window','$pagination',($compile,$timeout,$window,$pagination) => {
     return {
         restrict: 'AE',
         scope: {
@@ -61,11 +61,11 @@ angular.module('cui-ng')
                         });
                     },
                     paginateResize:() => {
-                        resizeInterval=$interval(paginate.helpers.resizeHandler,50);
+                        angular.element($window).bind('resize', paginate.helpers.newresizeHandler);
                     },
                     scopeDestroy:() => {
                         scope.$on('$destroy',() => {
-                            $interval.cancel(resizeInterval); // unbinds the resize interval
+                            angular.element($window).off('resize');
                         });
                     }
                 },
@@ -97,12 +97,9 @@ angular.module('cui-ng')
                         });
                     },
                     resizeHandler:() => {
-                        if(!paginate.config.width) paginate.config.width = paginate.selectors.$paginate.width();
-                        else if(paginate.selectors.$paginate.width() !== paginate.config.width) {
-                            paginate.config.width = paginate.selectors.$paginate.width();
-                            paginate.helpers.updateConfig();
-                            paginate.scope.reRender();
-                        }
+                        paginate.helpers.updateConfig();
+                        paginate.scope.reRender();
+                        scope.$apply();
                     },
                     whatEllipsesToShow:() => {
                         if(paginate.config.numberOfPages <= paginate.config.howManyPagesWeCanShow) return 'none';
