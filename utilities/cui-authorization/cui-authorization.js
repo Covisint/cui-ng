@@ -1,11 +1,87 @@
+// -----------------------
+// deprecated...
+// -----------------------
 const goToState = ($state,$rootScope,stateName,toState,toParams,fromState,fromParams) => {
   $state.go(stateName,toParams,{ notify:false }).then(()=>{
     $rootScope.$broadcast('$stateChangeSuccess',{toState,toParams,fromState,fromParams});
   });
 };
+// -----------------------
 
 
 angular.module('cui.authorization',[])
+
+
+// -----------------------
+// new...
+// -----------------------
+.factory('cui.authorization.evalRouteRequest', ['cui.authorization.permitted', '$rootScope', '$state', (permitted, $rootScope, $state) => {
+  const evalRouteRequest = (toState, toParams, fromState, fromParams, nonAuthState='notAuthorized') => {
+
+    let resolvedState = permitted(toState.access.permittedLogic, toState.access.roles, toState.access.entitlements) ? toState.name : nonAuthState;
+    cui.log('cui.authorization.evalRouteRequest', resolvedState, toState, toParams);
+
+    $state.go(resolvedState, toParams, {notify: false}).then( () => {
+      $rootScope.$broadcast('$stateChangeSuccess', {toState, toParams, fromState, fromParams});
+    });
+  };
+
+  return evalRouteRequest;
+}])
+.factory('cui.authorization.permitted', [() => {
+  function permitted(logic, roles, entitlements) {
+    function hasAny(superset, subset) {
+      return ! _.isEmpty( _.intersection(subset, superset) );
+    }
+    function hasAll(superset, subset) {
+      return _.isEmpty( _.difference(subset, superset) );
+    }
+    function has(obj, superset) {
+      if (obj) {
+        if (obj.all) {
+          return hasAll(superset, obj.all);
+        } else if (obj.any) {
+          return hasAny(superset, obj.any);
+        } else {
+          return false;
+        }
+      } else {
+        return true;
+      }
+    }
+
+    var rc = false;
+    var hasRoles = false;
+    var hasEntitlements = false;
+
+    if (logic) {
+      if (logic.all) {
+        hasRoles = has(logic.all.roles, roles);
+        hasEntitlements = has(logic.all.entitlements, entitlements);
+        rc = hasRoles && hasEntitlements;
+      } else if (logic.any) {
+        hasRoles = has(logic.any.roles, roles);
+        hasEntitlements = has(logic.any.entitlements, entitlements);
+        rc = hasRoles || hasEntitlements;
+      } else {
+        rc = false;
+      }
+    } else {
+      rc = true;
+    }
+
+    cui.log('cui.authorization.permitted', logic, rc, hasRoles, hasEntitlements);
+    return rc;
+  };
+
+  return permitted;
+}])
+// -----------------------
+
+
+// -----------------------
+// deprecated...
+// -----------------------
 .factory('cui.authorization.routing', ['cui.authorization.authorize', '$timeout','$rootScope','$state',(authorize,$timeout,$rootScope,$state) => {
   const routing = (toState, toParams, fromState, fromParams, userEntitlements,loginRequiredState='loginRequired',nonAuthState='notAuthorized') => {
 
@@ -37,6 +113,9 @@ angular.module('cui.authorization',[])
 
   return routing;
 }])
+// -----------------------
+// deprecated...
+// -----------------------
 .factory('cui.authorization.authorize', [() => {
   const authorize = (loginRequired, requiredEntitlements, entitlementType='atLeastOne', userEntitlements) => {
     let loweredPermissions = [],
@@ -75,6 +154,9 @@ angular.module('cui.authorization',[])
 
     return { authorize }
 }])
+// -----------------------
+// deprecated...
+// -----------------------
 .directive('cuiAccess',['cui.authorization.authorize',(authorize)=>{
     return{
         restrict:'A',
