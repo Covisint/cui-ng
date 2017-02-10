@@ -1,6 +1,6 @@
 'use strict';var _slicedToArray = function () {function sliceIterator(arr, i) {var _arr = [];var _n = true;var _d = false;var _e = undefined;try {for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {_arr.push(_s.value);if (i && _arr.length === i) break;}} catch (err) {_d = true;_e = err;} finally {try {if (!_n && _i["return"]) _i["return"]();} finally {if (_d) throw _e;}}return _arr;}return function (arr, i) {if (Array.isArray(arr)) {return arr;} else if (Symbol.iterator in Object(arr)) {return sliceIterator(arr, i);} else {throw new TypeError("Invalid attempt to destructure non-iterable instance");}};}();var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {return typeof obj;} : function (obj) {return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;};function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 
-// cui-ng build Wed Feb 08 2017 14:40:49
+// cui-ng build Fri Feb 10 2017 10:47:41
 
 ;(function (angular) {
     'use strict';
@@ -5198,19 +5198,7 @@
 
     }]);
 
-    // -----------------------
-    // deprecated...
-    // -----------------------
-    var goToState = function goToState($state, $rootScope, stateName, toState, toParams, fromState, fromParams) {
-        $state.go(stateName, toParams, { notify: false }).then(function () {
-            $rootScope.$broadcast('$stateChangeSuccess', { toState: toState, toParams: toParams, fromState: fromState, fromParams: fromParams });
-        });
-    };
-    // -----------------------
-
-
     angular.module('cui.authorization', [])
-
 
     // -----------------------
     // new...
@@ -5283,6 +5271,12 @@
     // deprecated...
     // -----------------------
     .factory('cui.authorization.routing', ['cui.authorization.authorize', '$timeout', '$rootScope', '$state', function (authorize, $timeout, $rootScope, $state) {
+        var goToState = function goToState($state, $rootScope, stateName, toState, toParams, fromState, fromParams) {
+            $state.go(stateName, toParams, { notify: false }).then(function () {
+                $rootScope.$broadcast('$stateChangeSuccess', { toState: toState, toParams: toParams, fromState: fromState, fromParams: fromParams });
+            });
+        };
+
         var routing = function routing(toState, toParams, fromState, fromParams, userEntitlements) {var loginRequiredState = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 'loginRequired';var nonAuthState = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 'notAuthorized';
 
             var authorized = void 0;
@@ -5312,11 +5306,8 @@
         };
 
         return routing;
-    }])
-    // -----------------------
-    // deprecated...
-    // -----------------------
-    .factory('cui.authorization.authorize', [function () {
+    }]).
+    factory('cui.authorization.authorize', [function () {
         var authorize = function authorize(loginRequired, requiredEntitlements) {var entitlementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'atLeastOne';var userEntitlements = arguments[3];
             var loweredPermissions = [],
             hasPermission = true,
@@ -5353,11 +5344,8 @@
         };
 
         return { authorize: authorize };
-    }])
-    // -----------------------
-    // deprecated...
-    // -----------------------
-    .directive('cuiAccess', ['cui.authorization.authorize', function (authorize) {
+    }]).
+    directive('cuiAccess', ['cui.authorization.authorize', function (authorize) {
         return {
             restrict: 'A',
             scope: {
@@ -5394,6 +5382,8 @@
             } };
 
     }]);
+    // -----------------------
+
 
 
 })(angular);

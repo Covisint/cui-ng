@@ -1,16 +1,4 @@
-// -----------------------
-// deprecated...
-// -----------------------
-const goToState = ($state,$rootScope,stateName,toState,toParams,fromState,fromParams) => {
-  $state.go(stateName,toParams,{ notify:false }).then(()=>{
-    $rootScope.$broadcast('$stateChangeSuccess',{toState,toParams,fromState,fromParams});
-  });
-};
-// -----------------------
-
-
 angular.module('cui.authorization',[])
-
 
 // -----------------------
 // new...
@@ -83,6 +71,12 @@ angular.module('cui.authorization',[])
 // deprecated...
 // -----------------------
 .factory('cui.authorization.routing', ['cui.authorization.authorize', '$timeout','$rootScope','$state',(authorize,$timeout,$rootScope,$state) => {
+  const goToState = ($state,$rootScope,stateName,toState,toParams,fromState,fromParams) => {
+    $state.go(stateName,toParams,{ notify:false }).then(()=>{
+      $rootScope.$broadcast('$stateChangeSuccess',{toState,toParams,fromState,fromParams});
+    });
+  };
+
   const routing = (toState, toParams, fromState, fromParams, userEntitlements,loginRequiredState='loginRequired',nonAuthState='notAuthorized') => {
 
     let authorized;
@@ -113,9 +107,6 @@ angular.module('cui.authorization',[])
 
   return routing;
 }])
-// -----------------------
-// deprecated...
-// -----------------------
 .factory('cui.authorization.authorize', [() => {
   const authorize = (loginRequired, requiredEntitlements, entitlementType='atLeastOne', userEntitlements) => {
     let loweredPermissions = [],
@@ -154,9 +145,6 @@ angular.module('cui.authorization',[])
 
     return { authorize }
 }])
-// -----------------------
-// deprecated...
-// -----------------------
 .directive('cuiAccess',['cui.authorization.authorize',(authorize)=>{
     return{
         restrict:'A',
@@ -194,3 +182,5 @@ angular.module('cui.authorization',[])
         }
     };
 }]);
+// -----------------------
+
