@@ -1,8 +1,9 @@
 # CUI-NG Changelog
 
-## [1.10.7] - Unreleased
+## [1.10.7] - 2017-2-7
 
 ### Added
+- Paginate: refactor out the need for $interval to resolve scope refresh cascading all the way up to base object every 50ms, and also to resolve performance concerns.  Popover: set $interval calls to not refresh scope on each invocation.
 - Cui-Dropdown now supports standard dropdown keyboard functionality such as opening the dropdown using Space/Enter or navigating through dropdown options via arrow keys and selecting them with Space/Enter. You can read the specific changes in the [Cui-Dropdown Readme](./directives/cui-dropdown/README.md).
 
 
@@ -29,7 +30,7 @@
 ## [1.10.2] - 2016-10-18
 
 ### Fixed
-* Fixed inconsitent width rendering of the dropdown in `cui-dropdown`. 
+* Fixed inconsitent width rendering of the dropdown in `cui-dropdown`.
 
 
 ## [1.10.1] - 2016-10-17
