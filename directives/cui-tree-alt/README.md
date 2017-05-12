@@ -51,8 +51,8 @@ Note:
 * `cui-tree-alt-leaf-click-callback` - callback function to a click on a leaf. This function is called with 3 params - the object on the leaf that got clicked, the leaf html element that got clicked (so we can manipulate classes) and the JS click event, in that order.
 
 
-![cui-tree-alt-example](https://github.com/thirdwavellc/cui-ng/blob/master/directives/cui-tree-alt/cui-tree-alt.png?raw=true)
+![cui-tree-alt-example](https://github.com/covisint/cui-ng/tree/master/directives//cui-tree-alt/cui-tree-alt.png?raw=true)
 
-## Change Log 5/17/2016
+## Change Log 5/12/2017
 
 * Now using scope.$eval to parse the display value. No breaking changes.
