@@ -1,0 +1,89 @@
+.cui-tree-alt {
+    display: inline-block;
+    position: relative;
+    margin-top: 20px;
+}
+
+.cui-tree-alt__leaf {
+    width: 150px;
+    height: 40px;
+    /*border: 1px solid rgb(106,152,160);*/
+    /*margin-bottom: 10px;*/
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(0,108,119);
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+/* Vertical lines */
+/*.cui-tree-alt__leaf--last::before {
+    content:'';
+    position: absolute;
+    width: 2px;
+    left: 0;
+    top: -10px;
+    bottom: 18px;
+    background-color: rgb(106,152,160);
+}*/
+
+/*0 margin for first level, 50px margin left for each level after that*/
+.cui-tree-alt--nesting-0 {
+    display: block;
+    position: relative;
+}
+
+.cui-tree-alt--nested {
+    display: block;
+    position: relative;
+    margin-left: 30px;
+}
+
+.cui-tree-alt__leaf>span {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.cui-tree-alt__leaf.active{
+    background-color: rgb(106,152,160);
+    color: white;
+}
+
+/*Draw out the horizontal line before each leaf*/
+/*.cui-tree-alt__leaf > span::before {
+    content: '';
+    width: 20px;
+    background-color: rgb(106,152,160);
+    height: 2px;
+    position: absolute;
+    top: 50%;
+    left: -20px;
+}*/
+
+/*This removes the horizontal line unwanted trail*/
+/*.cui-tree-alt__branch--last > .cui-tree-alt--nested::before {
+    content: '';
+    position: absolute;
+    width: 3px;
+    background-color: white;
+    left: -50px;
+    top: -28px;
+    bottom: 0;
+}*/
+
+.cui-tree-icon {
+    fill: $cui-primary-colors--dark;
+    height: 24px;
+    width: 24px;
+}
+.cui-tree-hide-icon {
+    opacity:0;
+    pointer-events:none;
+}
