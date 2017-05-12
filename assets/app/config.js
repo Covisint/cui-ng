@@ -79,6 +79,11 @@ angular.module('app')
         templateUrl: templateBase + 'cui-tree/cui-tree.html',
         controller: returnCtrlAs('cuiTree')
     })
+    .state('cuiTreeAdvanced', {
+        url: '/cui-tree-advanced',
+        templateUrl: templateBase + 'cui-tree-advanced/cui-tree-advanced.html',
+        controller: returnCtrlAs('cuiTreeAdvanced')
+    })
     .state('cuiWizard', {
         url: '/cui-wizard',
         templateUrl: templateBase + 'cui-wizard/cui-wizard.html'
