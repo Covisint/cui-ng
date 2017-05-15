@@ -1,6 +1,6 @@
 'use strict';var _slicedToArray = function () {function sliceIterator(arr, i) {var _arr = [];var _n = true;var _d = false;var _e = undefined;try {for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {_arr.push(_s.value);if (i && _arr.length === i) break;}} catch (err) {_d = true;_e = err;} finally {try {if (!_n && _i["return"]) _i["return"]();} finally {if (_d) throw _e;}}return _arr;}return function (arr, i) {if (Array.isArray(arr)) {return arr;} else if (Symbol.iterator in Object(arr)) {return sliceIterator(arr, i);} else {throw new TypeError("Invalid attempt to destructure non-iterable instance");}};}();var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {return typeof obj;} : function (obj) {return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;};function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 
-// cui-ng build Fri Feb 10 2017 10:52:45
+// cui-ng build Fri May 12 2017 11:17:27
 
 ;(function (angular) {
     'use strict';
@@ -2461,6 +2461,118 @@
             template: '<ng-transclude></ng-transclude>' };});
 
 
+
+    var defaultsAlt = {
+        cuiTreeAltNest0Class: 'cui-tree-alt--nesting-0',
+        cuiTreeAltNestXClass: 'cui-tree-alt--nested',
+        cuiTreeAltLeafWrapper: '<div class="cui-tree-alt__leaf"></div>',
+        cuiTreeAltLastLeafClass: 'cui-tree-alt__leaf--last',
+        cuiTreeAltBranchWrapper: '<div class="cui-tree-alt__branch"></div>',
+        cuiTreeAltLastBranchClass: 'cui-tree-alt__branch--last',
+        cuiTreeAltNestPrefix: 'cui-tree-alt--nesting-' };
+
+
+    var cuiTreeAltHelpers = {
+        getDisplayValue: function getDisplayValue(scope, opts, object) {var
+            cuiTreeAltLeafDisplay = opts.cuiTreeAltLeafDisplay;
+            var propertiesToDisplay = cuiTreeAltLeafDisplay.split('+');
+
+            return scope.$eval(cuiTreeAltLeafDisplay, { object: object });
+        },
+        getClassListForNestingLevel: function getClassListForNestingLevel(opts, nesting) {var
+            cuiTreeAltNestPrefix = opts.cuiTreeAltNestPrefix,cuiTreeAltNest0Class = opts.cuiTreeAltNest0Class,cuiTreeAltNestXClass = opts.cuiTreeAltNestXClass;
+            var classList = [];
+            switch (nesting) {
+                case 0:
+                    classList.push(cuiTreeAltNest0Class || defaultsAlt.cuiTreeAltNest0Class);
+                    break;
+                default:
+                    classList.push((cuiTreeAltNestPrefix || defaultsAlt.cuiTreeAltNestPrefix) + nesting);
+                    classList.push(cuiTreeAltNestXClass || defaultsAlt.cuiTreeAltNestXClass);}
+            ;
+            return classList;
+        },
+        getElements: function getElements(scope, opts, objects, leafClickCallback, toggleExpandCallback) {var nesting = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;var parent = arguments[6];var
+            getElements = cuiTreeAltHelpers.getElements,getDisplayValue = cuiTreeAltHelpers.getDisplayValue,getClassListForNestingLevel = cuiTreeAltHelpers.getClassListForNestingLevel;var
+            cuiTreeAltBranchWrapper = opts.cuiTreeAltBranchWrapper,cuiTreeAltLeafWrapper = opts.cuiTreeAltLeafWrapper,cuiTreeAltLastLeafClass = opts.cuiTreeAltLastLeafClass,cuiTreeAltLastBranchClass = opts.cuiTreeAltLastBranchClass;
+            var $node = $('<div></div>');
+            getClassListForNestingLevel(opts, nesting).forEach(function (className) {return $node[0].classList.add(className);});
+            objects.forEach(function (object, i) {
+                var $leafInner = $('<span></span>');
+                var $leafExpandIcon = $('<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="cui-tree-icon" viewBox="0 0 216 146">\n                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="node_modules/@covisint/cui-icons/dist/font-awesome/font-awesome-out.svg#plus27"></use>\n                </svg>');
+
+
+                var $leafCollapseIcon = $('<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="cui-tree-icon" viewBox="0 0 216 146">\n                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="node_modules/@covisint/cui-icons/dist/font-awesome/font-awesome-out.svg#minus19"></use>\n                </svg>');
+
+
+                var $leafInnerText = $('<span>' + getDisplayValue(scope, opts, object) + '</span>');
+                // const $leafInnerExpandIcon = $(`<span>t</span>`) ;
+                if (!parent) {
+                    if (!object.children) {
+                        $leafInner.append($leafExpandIcon);
+                        $leafExpandIcon[0].classList.add('cui-tree-hide-icon');
+                    } else {
+                        if (object.expanded) {
+                            $leafInner.append($leafCollapseIcon);
+                        } else {
+                            $leafInner.append($leafExpandIcon);
+                        }
+                    }
+                    if (leafClickCallback) $leafInnerText[0].addEventListener("click", function (e) {leafClickCallback(object, this, e);}, true);
+                    if (toggleExpandCallback) $leafInner[0].children[0].addEventListener("click", function (e) {toggleExpandCallback(object, this, e);}, true);
+                }
+                $leafInner.append($leafInnerText);
+                var $leafWrapper = $(cuiTreeAltLeafWrapper || defaultsAlt.cuiTreeAltLeafWrapper);
+                $leafWrapper.append($leafInner);
+                if (i === objects.length - 1) $leafWrapper[0].classList.add(cuiTreeAltLastLeafClass || defaultsAlt.cuiTreeAltLastLeafClass); // add class to last leaf of each indent level.
+                if (object.children && (parent || object.expanded === true)) {// if it has children creat a new branch for the leaf and it's children
+                    var $branchWrapper = $(cuiTreeAltBranchWrapper || defaultsAlt.cuiTreeAltBranchWrapper).append($leafWrapper);
+                    if (i === objects.length - 1) $branchWrapper[0].classList.add(cuiTreeAltLastBranchClass || defaultsAlt.cuiTreeAltLastBranchClass);
+                    $branchWrapper.append(getElements(scope, opts, object.children, leafClickCallback, toggleExpandCallback, nesting + 1)); // recursively gets the child nodes
+                    $node.append($branchWrapper);
+                } else
+                {
+                    $node.append($leafWrapper);
+                }
+            });
+            return $node;
+        } };
+
+
+    var cuiTreeAlt = {
+        pre: function pre(scope, elem, attrs) {
+            var $tree = void 0;
+            var leafClickCallback = scope.$eval(attrs.cuiTreeAltLeafClickCallback);
+            var toggleExpandCallback = scope.$eval(attrs.cuiTreeAltToggleExpandCallback);
+            var renderTree = function renderTree(tree) {
+                if ($tree) {
+                    $tree.detach();
+                    $tree.children().unbind();
+                }
+                $tree = cuiTreeAltHelpers.getElements(scope, attrs, tree, leafClickCallback, toggleExpandCallback, 0, true);
+                elem.append($tree);
+            };
+
+            scope.$watch(function () {return scope.$eval(attrs.cuiTreeAlt);}, function (newTree) {
+                if (newTree) renderTree(newTree);
+            }, true);
+
+            scope.$on('$destroy', function () {
+                $tree.children().unbind();
+            });
+        } };
+
+
+    angular.module('cui-ng').
+    directive('cuiTreeAlt', [function () {
+        return {
+            restrict: 'A',
+            scope: true,
+            compile: function compile() {
+                return cuiTreeAlt;
+            } };
+
+    }]);
 
     var defaults = {
         cuiTreeNest0Class: 'cui-tree--nesting-0',
