@@ -1,6 +1,6 @@
 'use strict';var _slicedToArray = function () {function sliceIterator(arr, i) {var _arr = [];var _n = true;var _d = false;var _e = undefined;try {for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {_arr.push(_s.value);if (i && _arr.length === i) break;}} catch (err) {_d = true;_e = err;} finally {try {if (!_n && _i["return"]) _i["return"]();} finally {if (_d) throw _e;}}return _arr;}return function (arr, i) {if (Array.isArray(arr)) {return arr;} else if (Symbol.iterator in Object(arr)) {return sliceIterator(arr, i);} else {throw new TypeError("Invalid attempt to destructure non-iterable instance");}};}();var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {return typeof obj;} : function (obj) {return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;};function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 
-// cui-ng build Mon May 15 2017 11:09:27
+// cui-ng build Fri Sep 08 2017 12:22:13
 
 ;(function (angular) {
     'use strict';
@@ -1148,14 +1148,14 @@
                                         img.src = scope.cuiAvatar;
                                         img.onload = applyImage(img.src);
                                     } else
-                                    if (scope.cuiAvatarEmail) {(function () {
-                                            var hashedEmail = md5(scope.cuiAvatarEmail);
-                                            // ?d=404 tells gravatar not to give me a default gravatar
-                                            $http.get('https://www.gravatar.com/avatar/' + hashedEmail + '?d=404').
-                                            then(function (res) {// If the user has a gravatar account and has set a picture
-                                                img.src = 'https://www.gravatar.com/avatar/' + hashedEmail;
-                                                img.onload = applyImage(img.src);
-                                            });})();
+                                    if (scope.cuiAvatarEmail) {
+                                        var hashedEmail = md5(scope.cuiAvatarEmail);
+                                        // ?d=404 tells gravatar not to give me a default gravatar
+                                        $http.get('https://www.gravatar.com/avatar/' + hashedEmail + '?d=404').
+                                        then(function (res) {// If the user has a gravatar account and has set a picture
+                                            img.src = 'https://www.gravatar.com/avatar/' + hashedEmail;
+                                            img.onload = applyImage(img.src);
+                                        });
                                     } else
                                     return;
                                 } },
@@ -1405,24 +1405,24 @@
                                 typeAheadSearch = '';
                                 dropdownItems[0].focus();
                             } else
-                            {(function () {
-                                    var shouldContinue = true;
-                                    typeAheadSearch += e.key.toLowerCase();
+                            {
+                                var shouldContinue = true;
+                                typeAheadSearch += e.key.toLowerCase();
 
-                                    angular.forEach(dropdownItems, function (item, index) {
-                                        if (shouldContinue) {
-                                            if (typeAheadSearch.length === 1) {
-                                                if (item.outerText[0].toLowerCase() === typeAheadSearch) {
-                                                    dropdownItems[index].focus();
-                                                    shouldContinue = false;
-                                                }
-                                            } else
-                                            if (item.outerText.toLowerCase().indexOf(typeAheadSearch) >= 0) {
+                                angular.forEach(dropdownItems, function (item, index) {
+                                    if (shouldContinue) {
+                                        if (typeAheadSearch.length === 1) {
+                                            if (item.outerText[0].toLowerCase() === typeAheadSearch) {
                                                 dropdownItems[index].focus();
                                                 shouldContinue = false;
                                             }
+                                        } else
+                                        if (item.outerText.toLowerCase().indexOf(typeAheadSearch) >= 0) {
+                                            dropdownItems[index].focus();
+                                            shouldContinue = false;
                                         }
-                                    });})();
+                                    }
+                                });
                             }
                         } },
 
@@ -2499,10 +2499,10 @@
             getClassListForNestingLevel(opts, nesting).forEach(function (className) {return $node[0].classList.add(className);});
             objects.forEach(function (object, i) {
                 var $leafInner = $('<span></span>');
-                var $leafExpandIcon = $('<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="cui-tree-icon" viewBox="0 0 216 146">\n                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="node_modules/@covisint/cui-icons/dist/font-awesome/font-awesome-out.svg#plus27"></use>\n                </svg>');
+                var $leafExpandIcon = $('<div><svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="cui-tree-icon" viewBox="0 0 216 146">\n                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="node_modules/@covisint/cui-icons/dist/font-awesome/font-awesome-out.svg#plus27"></use>\n                </svg></div');
 
 
-                var $leafCollapseIcon = $('<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="cui-tree-icon" viewBox="0 0 216 146">\n                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="node_modules/@covisint/cui-icons/dist/font-awesome/font-awesome-out.svg#minus19"></use>\n                </svg>');
+                var $leafCollapseIcon = $('<div><svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="cui-tree-icon" viewBox="0 0 216 146">\n                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="node_modules/@covisint/cui-icons/dist/font-awesome/font-awesome-out.svg#minus19"></use>\n                </svg></div>');
 
 
                 var $leafInnerText = $('<span>' + getDisplayValue(scope, opts, object) + '</span>');
@@ -3641,12 +3641,12 @@
             require: 'ngModel',
             link: function link(scope, element, attrs, ctrl) {
                 element.bind("keydown keypress", function (event) {
-                    if (event.which === 13) {(function () {
-                            event.preventDefault();
-                            var callback = scope.$eval(attrs.onEnter);
-                            $timeout(function () {
-                                callback(ctrl.$viewValue);
-                            });})();
+                    if (event.which === 13) {
+                        event.preventDefault();
+                        var callback = scope.$eval(attrs.onEnter);
+                        $timeout(function () {
+                            callback(ctrl.$viewValue);
+                        });
                     }
                 });
 
