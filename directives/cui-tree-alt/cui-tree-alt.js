@@ -35,12 +35,12 @@ const cuiTreeAltHelpers = {
         getClassListForNestingLevel(opts,nesting).forEach(className => $node[0].classList.add(className));
         objects.forEach((object,i) => {
             const $leafInner = $(`<span></span>`);
-            const $leafExpandIcon=$(`<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="cui-tree-icon" viewBox="0 0 216 146">
+            const $leafExpandIcon=$(`<div><svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="cui-tree-icon" viewBox="0 0 216 146">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="node_modules/@covisint/cui-icons/dist/font-awesome/font-awesome-out.svg#plus27"></use>
-                </svg>`)
-            const $leafCollapseIcon=$(`<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="cui-tree-icon" viewBox="0 0 216 146">
+                </svg></div`)
+            const $leafCollapseIcon=$(`<div><svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="cui-tree-icon" viewBox="0 0 216 146">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="node_modules/@covisint/cui-icons/dist/font-awesome/font-awesome-out.svg#minus19"></use>
-                </svg>`)
+                </svg></div>`)
             const $leafInnerText = $(`<span>${ getDisplayValue(scope, opts, object) }</span>`);
             // const $leafInnerExpandIcon = $(`<span>t</span>`) ;
             if (!parent) {
